@@ -26,9 +26,9 @@ public class UserService {
     private final ResponseUtil responseUtil;
     private final ModelMapper modelMapper;
 
-    public Optional<Response> getUserByEmailAndPassword(String email, String password) {
+    public Optional<Response> getUserByEmailAndPassword(UserEntityDto userEntityDto) {
         Response response;
-        Optional<User> user = userRepo.findByEmailAndPassword(email, password);
+        Optional<User> user = userRepo.findByEmailAndPassword(userEntityDto.getEmail(), userEntityDto.getPassword());
         if (user.isPresent()) {
             log.info("User exists fetching user details...");
             Type type = new TypeToken<UserEntityDto>() {

@@ -19,10 +19,10 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    ResponseEntity<Optional<Response>> getUser(@RequestParam String email, @RequestParam String password){
-        log.info("Request received for getting user details using email: {}", email );
-        return ResponseEntity.ok(userService.getUserByEmailAndPassword(email, password));
+    @PostMapping("/authenticate")
+    ResponseEntity<Optional<Response>> getUser(@RequestBody UserEntityDto userEntityDto){
+        log.info("Request received for authenticating user details: {}", userEntityDto );
+        return ResponseEntity.ok(userService.getUserByEmailAndPassword(userEntityDto));
     }
 
     @GetMapping("/all")
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping
-    ResponseEntity<Optional<Response>> getUser(@RequestBody UserEntityDto userEntityDto){
+    ResponseEntity<Optional<Response>> addUser(@RequestBody UserEntityDto userEntityDto){
         log.info("Request received to register and update the user");
         return ResponseEntity.ok(userService.registerAndUpdateUser(userEntityDto));
     }
