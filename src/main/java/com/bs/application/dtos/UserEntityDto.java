@@ -1,5 +1,6 @@
 package com.bs.application.dtos;
 
+import com.bs.application.security.Role;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +21,5 @@ public class UserEntityDto extends BaseEntityDto {
     private String userId;
     private AddressEntityDto address;
     private CompanyEntityDto company;
-    private RolesEntityDto roles;
+    private Role role;
 }
