@@ -1,8 +1,5 @@
 package com.bs.application.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,13 +7,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
-@Getter
-@Setter
-@MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class BaseEntity {
+@Getter
+@Setter
+@Builder
+@Entity
+@Table(name = "template")
+public class Template {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +23,12 @@ public class BaseEntity {
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
+
+    @Column(columnDefinition="TEXT", nullable = false)
+    private String template;
+
+    @Column(nullable = false)
+    private String subject;
 
     @Basic
     @Column(name = "updated_at")
@@ -42,4 +46,6 @@ public class BaseEntity {
     protected void onUpdate(){
         updatedAt = new Timestamp(System.currentTimeMillis());
     }
+    @Column(nullable = false, unique = true)
+    private String templateKey;
 }

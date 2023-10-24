@@ -12,4 +12,10 @@ public class AppProps {
 
     @Value("${bs.perfume.application.security.signature}")
     private String signature;
+
+    @Value("${spring.mail.username}")
+    private String systemMailAddress;
+
+    @Value("${system.user.management.reset.password.redirection.url}")
+    private String resetPasswordUrl;
 }

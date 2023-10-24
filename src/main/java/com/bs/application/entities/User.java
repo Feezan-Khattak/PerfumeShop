@@ -12,7 +12,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -84,6 +86,9 @@ public class User implements UserDetails {
 
     @OneToOne(mappedBy = "user_id")
     private Wishlist wishlist;
+
+    @OneToMany(mappedBy = "user_id")
+    private List<ResetPassword> resetPasswords = new ArrayList<>();
 
     @PrePersist
     protected  void onCreate(){

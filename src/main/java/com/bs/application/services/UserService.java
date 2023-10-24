@@ -1,22 +1,28 @@
 package com.bs.application.services;
 
-import com.bs.application.dtos.Response;
-import com.bs.application.dtos.UserEntityDto;
+import com.bs.application.dtos.*;
+import com.bs.application.entities.ResetPassword;
 import com.bs.application.entities.User;
+import com.bs.application.repos.ResetPasswordRepo;
 import com.bs.application.repos.UserRepo;
+import com.bs.application.utils.AppProps;
 import com.bs.application.utils.ResponseUtil;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
+
+import static com.bs.application.utils.Mail.FORGOT_PASSWORD;
 
 @Slf4j
 @Service
@@ -26,7 +32,7 @@ public class UserService {
     private final ResponseUtil responseUtil;
     private final ModelMapper modelMapper;
 
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return username ->
                 userRepo.findByEmail(username).orElseThrow(() ->
                         new UsernameNotFoundException("Failed to authenticate user with the given email"));
@@ -59,6 +65,20 @@ public class UserService {
         } else {
             log.info("Failed to fetch user details, no user found");
             response = responseUtil.generateFailureResponse("No User found");
+        }
+        return Optional.of(response);
+    }
+
+    public Optional<Response> getUser(String email) {
+        Response response;
+        Optional<User> user = userRepo.findByEmail(email);
+        if (user.isPresent()) {
+            Type type = new TypeToken<UserEntityDto>() {
+            }.getType();
+            UserEntityDto fetchedUser = modelMapper.map(user, type);
+            response = responseUtil.generateSuccessResponse(fetchedUser);
+        } else {
+            response = responseUtil.generateFailureResponse("Failed to fetch user detail using email: " + email);
         }
         return Optional.of(response);
     }
