@@ -6,10 +6,14 @@ import com.bs.application.services.PerfumeService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.helpers.Util;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -78,5 +82,18 @@ public class PerfumeController {
     ResponseEntity<Optional<Response>> registerAndUpdatePerfumeDetails(@RequestBody PerfumeEntityDto perfumeEntityDto) {
         log.info("Request received to add the perfume details: {}", perfumeEntityDto.toString());
         return ResponseEntity.ok(perfumeService.registerAndUpdatePerfumeDetails(perfumeEntityDto));
+    }
+
+    @PostMapping(value = "/bulk_upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('admin:write')")
+    ResponseEntity<Response> postPerfumeFromExcel(@RequestBody MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Response.builder().status("BAD REQUEST").error("File provide file").build());
+        } else if (!file.isEmpty() || !Objects.requireNonNull(file.getContentType()).equalsIgnoreCase("text/csv")) {
+            return ResponseEntity.badRequest().body(Response.builder().status("BAD REQUEST").error("File should be in csv format").build());
+        }
+        log.info("Request Received to post perfume form excel");
+        perfumeService.bulkUploadPerfumes(file);
+            return null;
     }
 }

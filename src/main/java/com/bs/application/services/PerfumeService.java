@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -176,5 +177,9 @@ public class PerfumeService {
         perfumeEntityDto.setUuid(UUID.randomUUID().toString());
         Perfume mappedPerfume = modelMapper.map(perfumeEntityDto, Perfume.class);
         return perfumeRepo.save(mappedPerfume);
+    }
+
+    public void bulkUploadPerfumes(MultipartFile file) {
+
     }
 }

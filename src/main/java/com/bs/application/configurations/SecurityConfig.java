@@ -18,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static com.bs.application.security.Permission.*;
 import static com.bs.application.security.Role.ADMIN;
@@ -39,8 +41,8 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/auth/**"))
-                        .permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/auth/**")).permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher(OPTIONS, "/**")).permitAll()
 
                        /*
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/user/**")).hasAnyRole(ADMIN.name(), USER.name())
