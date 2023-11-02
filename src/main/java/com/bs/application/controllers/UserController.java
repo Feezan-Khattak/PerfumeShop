@@ -14,10 +14,9 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(value = "*")
 @RequestMapping("api/v1/user")
 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.OPTIONS,
-        RequestMethod.POST, RequestMethod.GET})
 public class UserController {
     private final UserService userService;
 

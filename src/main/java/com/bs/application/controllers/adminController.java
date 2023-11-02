@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(value = "*")
 @RequestMapping("api/v1/admin")
 @PreAuthorize("hasRole('ADMIN')")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class adminController {
 }

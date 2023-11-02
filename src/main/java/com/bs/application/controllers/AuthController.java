@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
+@CrossOrigin(value = "*")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthController {
     private final AuthenticationService authenticationService;
 

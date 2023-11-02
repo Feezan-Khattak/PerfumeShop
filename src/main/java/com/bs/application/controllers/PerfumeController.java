@@ -19,9 +19,9 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(value = "*")
 @RequestMapping("api/v1/perfume")
 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PerfumeController {
     private final PerfumeService perfumeService;
 
