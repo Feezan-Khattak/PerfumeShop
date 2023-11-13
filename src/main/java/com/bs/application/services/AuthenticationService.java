@@ -32,7 +32,6 @@ import static com.bs.application.utils.Mail.FORGOT_PASSWORD;
 @Slf4j
 @AllArgsConstructor
 public class AuthenticationService {
-
     private final UserRepo userRepo;
     private final ResponseUtil responseUtil;
     private final ModelMapper modelMapper;
@@ -51,17 +50,22 @@ public class AuthenticationService {
 
             User user = userRepo.findByEmail(signInRequest.getEmail()).orElseThrow(() ->
                     new IllegalArgumentException("invalid Username and Password"));
+            if (user.isEnabled()) {
+                var token = jwtService.generateToken(user);
+                var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
 
-            var token = jwtService.generateToken(user);
-            var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
-
-            return JwtAuthenticationResponse.builder()
-                    .token(token)
-                    .refreshToken(refreshToken)
-                    .build();
+                return JwtAuthenticationResponse.builder()
+                        .status("OK")
+                        .token(token)
+                        .refreshToken(refreshToken)
+                        .build();
+            } else {
+                log.info("User is not enabled, please contact costumer support");
+                return JwtAuthenticationResponse.builder().status("User not enabled").build();
+            }
         } else {
             log.info("Please provide email and password");
-            return JwtAuthenticationResponse.builder().build();
+            return JwtAuthenticationResponse.builder().status("Invalid Credentials").build();
         }
     }
 
@@ -113,6 +117,7 @@ public class AuthenticationService {
     private User saveUser(UserEntityDto userEntityDto) {
         userEntityDto.setUserId(UUID.randomUUID().toString());
         userEntityDto.setPassword(passwordEncoder.encode(userEntityDto.getPassword()));
+        userEntityDto.setEnabled(true);
         User mappedUser = modelMapper.map(userEntityDto, User.class);
         return userRepo.save(mappedUser);
     }
@@ -198,9 +203,9 @@ public class AuthenticationService {
     public Optional<Response> verifyResetToken(String resetToken) {
         Response response;
         Optional<ResetPassword> resetPasswordToken = resetPasswordRepo.findByToken(resetToken);
-        if(resetPasswordToken.isPresent()){
+        if (resetPasswordToken.isPresent()) {
             boolean before = resetPasswordToken.get().getExpiresAt().before(new Timestamp(System.currentTimeMillis()));
-            if(!before){
+            if (!before) {
                 response = responseUtil.generateSuccessResponse("Reset Token is valid and ready to use");
             } else {
                 response = responseUtil.generateFailureResponse("Failed to validate the token, token is expired");

@@ -72,6 +72,10 @@ public class User implements UserDetails {
     private String userId;
 
     @Basic
+    @Column(name = "is_enabled")
+    private Boolean isEnabled;
+
+    @Basic
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address")
     private Address address;
@@ -89,18 +93,6 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user_id")
     private List<ResetPassword> resetPasswords = new ArrayList<>();
-
-    @PrePersist
-    protected  void onCreate(){
-        if(createdAt == null){
-            createdAt = new Timestamp(System.currentTimeMillis());
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate(){
-        updatedAt = new Timestamp(System.currentTimeMillis());
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -129,6 +121,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 }

@@ -9,7 +9,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
+
+import static java.util.Optional.of;
 
 @Slf4j
 @RestController
@@ -42,4 +45,11 @@ public class UserController {
         log.info("using email: {}", email);
         return ResponseEntity.of(userService.getUser(email));
     }
+
+    @PatchMapping("/{userId}")
+    ResponseEntity<Response> partialUserUpdate(@PathVariable String userId, @RequestBody Map<String, Object> updates){
+        log.info("Request received to partial update the user against userId: {}", userId);
+        return ResponseEntity.of(userService.updatePartialUpdate(userId, updates));
+    }
+
 }

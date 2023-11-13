@@ -82,4 +82,23 @@ public class UserService {
         }
         return Optional.of(response);
     }
+
+    public Optional<Response> updatePartialUpdate(String userId, Map<String, Object> updates) {
+        Response response;
+        Optional<User> user = userRepo.findByUserId(userId);
+        if(user.isPresent()){
+            applyUpdates(user.get(), updates);
+            response = responseUtil.generateSuccessResponse("User details successfully updated");
+        } else {
+            response = responseUtil.generateFailureResponse("Failed to find user details against userId: " + userId);
+        }
+        return Optional.of(response);
+    }
+
+    private void applyUpdates(User user, Map<String, Object> updates){
+        if(updates.containsKey("isEnabled")){
+            user.setIsEnabled((Boolean) updates.get("isEnabled"));
+            userRepo.save(user);
+        }
+    }
 }

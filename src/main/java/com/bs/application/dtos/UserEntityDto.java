@@ -22,4 +22,5 @@ public class UserEntityDto extends BaseEntityDto {
     private AddressEntityDto address;
     private CompanyEntityDto company;
     private Role role;
+    private boolean isEnabled;
 }
